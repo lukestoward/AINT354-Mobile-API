@@ -14,11 +14,11 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public int CalendarId { get; set; }
-        public virtual Calendar Calendar { get; set; }
+        public Calendar Calendar { get; set; }
 
         [Required]
         public int CreatorId { get; set; }
-        public virtual User Creator { get; set; }
+        public User Creator { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -41,8 +41,8 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public int TypeId { get; set; }
-        public virtual EventType Type { get; set; }
+        public EventType Type { get; set; }
         
-        public virtual ICollection<EventComment> Comments { get; set; }
+        public ICollection<EventComment> Comments { get; set; }
     }
 }

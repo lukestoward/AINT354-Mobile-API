@@ -9,111 +9,69 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using AINT354_Mobile_API.Models;
+using System.Web.Http.Results;
+using AINT354_Mobile_API.BusinessLogic;
+using AINT354_Mobile_API.ModelDTOs;
 
 namespace AINT354_Mobile_API.Controllers
 {
     public class CalendarsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly CalendarService _calendarService;
 
-        // GET: api/Calendars
-        public IQueryable<Calendar> GetCalendars()
+        public CalendarsController()
         {
-            return db.Calendars;
+            _calendarService = new CalendarService();
         }
 
-        // GET: api/Calendars/5
-        [ResponseType(typeof(Calendar))]
-        public async Task<IHttpActionResult> GetCalendar(int id)
+        [HttpGet]
+        [ResponseType(typeof(List<CalendarDTO>))]
+        public async Task<IHttpActionResult> GetUserCalendars(int id)
         {
-            Calendar calendar = await db.Calendars.FindAsync(id);
-            if (calendar == null)
+            if (id == 0) return BadRequest();
+
+            var calendars = await _calendarService.GetUserCalendars(id);
+
+            return Ok(calendars);
+        }
+        
+        [HttpPost]
+        public async Task<IHttpActionResult> Create(CalendarDTO calendar)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var success = await _calendarService.CreateCalendar(calendar);
+
+            if (success)
             {
-                return NotFound();
+                return Ok();
             }
 
-            return Ok(calendar);
+            return BadRequest("Unable to create the new calendar");
         }
 
-        // PUT: api/Calendars/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutCalendar(int id, Calendar calendar)
+        [HttpDelete]
+        public async Task<IHttpActionResult> Delete(int id)
         {
-            if (!ModelState.IsValid)
+            if (id == 0) { return BadRequest(); }
+
+            var success = await _calendarService.DeleteCalendar(id);
+
+            if (success)
             {
-                return BadRequest(ModelState);
+                return Ok();
             }
 
-            if (id != calendar.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(calendar).State = EntityState.Modified;
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CalendarExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Calendars
-        [ResponseType(typeof(Calendar))]
-        public async Task<IHttpActionResult> PostCalendar(Calendar calendar)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Calendars.Add(calendar);
-            await db.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = calendar.Id }, calendar);
-        }
-
-        // DELETE: api/Calendars/5
-        [ResponseType(typeof(Calendar))]
-        public async Task<IHttpActionResult> DeleteCalendar(int id)
-        {
-            Calendar calendar = await db.Calendars.FindAsync(id);
-            if (calendar == null)
-            {
-                return NotFound();
-            }
-
-            db.Calendars.Remove(calendar);
-            await db.SaveChangesAsync();
-
-            return Ok(calendar);
+            return BadRequest("Unable to delete calendar, ID:" + id);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _calendarService.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool CalendarExists(int id)
-        {
-            return db.Calendars.Count(e => e.Id == id) > 0;
         }
     }
 }

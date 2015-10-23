@@ -12,11 +12,11 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public int EventId { get; set; }
-        public virtual Event Event { get; set; }
+        public Event Event { get; set; }
 
         [Required]
         public int CreatorId { get; set; }
-        public virtual User Creator { get; set; }
+        public User Creator { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }

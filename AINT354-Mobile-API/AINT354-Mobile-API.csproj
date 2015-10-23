@@ -133,7 +133,6 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationDbContext.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -168,7 +167,6 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\CalendarsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -232,12 +230,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AINT354-Mobile-API.Models\AINT354-Mobile-API.Models.csproj">
-      <Project>{bb1df3ee-356a-4281-a52e-50f2da83b3dd}</Project>
-      <Name>AINT354-Mobile-API.Models</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -249,6 +241,24 @@
     <EmbeddedResource Include="Migrations\201510231102478_Initial.resx">
       <DependentUpon>201510231102478_Initial.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AINT354-Mobile-API.BusinessLogic\AINT354-Mobile-API.BusinessLogic.csproj">
+      <Project>{06a21128-345e-4df6-8bb0-32ab38926e2c}</Project>
+      <Name>AINT354-Mobile-API.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AINT354-Mobile-API.DataAccess\AINT354-Mobile-API.DataAccess.csproj">
+      <Project>{b84091bc-569d-4b70-894e-6fb9749308bd}</Project>
+      <Name>AINT354-Mobile-API.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AINT354-Mobile-API.ModelDTOs\AINT354-Mobile-API.ModelDTOs.csproj">
+      <Project>{F75EFEFE-07BD-4D30-99CE-30BA5071439A}</Project>
+      <Name>AINT354-Mobile-API.ModelDTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AINT354-Mobile-API.Models\AINT354-Mobile-API.Models.csproj">
+      <Project>{bb1df3ee-356a-4281-a52e-50f2da83b3dd}</Project>
+      <Name>AINT354-Mobile-API.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

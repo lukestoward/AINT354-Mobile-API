@@ -26,17 +26,17 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public int ColourId { get; set; }
-        public virtual Colour Colour { get; set; }
+        public Colour Colour { get; set; }
 
         [Required]
         public int OwnerId { get; set; }
-        public virtual User Owner { get; set; }
+        public User Owner { get; set; }
 
         [Required]
         public int TypeId { get; set; }
-        public virtual CalendarType Type { get; set; }
+        public CalendarType Type { get; set; }
 
-        public virtual ICollection<Event> Events { get; set; }
+        public ICollection<Event> Events { get; set; }
 
     }
 }

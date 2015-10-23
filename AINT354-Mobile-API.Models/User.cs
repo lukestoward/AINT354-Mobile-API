@@ -11,7 +11,7 @@ namespace AINT354_Mobile_API.Models
         [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        public virtual ICollection<Calendar> Calendars { get; set; }
-        public virtual ICollection<Event> Events{ get; set; }
+        public ICollection<Calendar> Calendars { get; set; }
+        public ICollection<Event> Events{ get; set; }
     }
 }
