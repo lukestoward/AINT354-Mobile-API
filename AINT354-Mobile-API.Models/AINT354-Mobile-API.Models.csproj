@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Calendar.cs" />
-    <Compile Include="CalendarType.cs" />
     <Compile Include="Colour.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventComment.cs" />

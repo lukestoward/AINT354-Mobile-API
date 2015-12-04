@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 
 namespace AINT354_Mobile_API.BusinessLogic

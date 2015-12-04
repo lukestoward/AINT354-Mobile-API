@@ -32,10 +32,6 @@ namespace AINT354_Mobile_API.Models
         public int OwnerId { get; set; }
         public User Owner { get; set; }
 
-        [Required]
-        public int TypeId { get; set; }
-        public CalendarType Type { get; set; }
-
         public ICollection<Event> Events { get; set; }
 
     }

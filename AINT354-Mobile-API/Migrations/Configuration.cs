@@ -16,13 +16,6 @@ namespace AINT354_Mobile_API.Migrations
         
         protected override void Seed(ApplicationDbContext context)
         {
-
-            context.CalendarTypes.AddOrUpdate(p => p.Type,
-                new CalendarType { Type = "Public" },
-                new CalendarType { Type = "Private" }
-            );
-            context.SaveChanges();
-
             context.Colours.AddOrUpdate(p => p.ColourName,
                 new Colour { ColourName = "Red" },
                 new Colour { ColourName = "Green" },
@@ -37,7 +30,7 @@ namespace AINT354_Mobile_API.Migrations
             context.SaveChanges();
 
             context.Calendars.AddOrUpdate(p => p.Name,
-                new Calendar { Name = "Home", ColourId = 1, TypeId = 1, Description = "My calendar for home", OwnerId = 1 }
+                new Calendar { Name = "Home", ColourId = 1, Description = "My calendar for home", OwnerId = 1 }
               
             );
         }

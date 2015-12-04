@@ -24,14 +24,13 @@ namespace AINT354_Mobile_API.BusinessLogic
         public async Task<List<CalendarDTO>> GetUserCalendars(int id)
         {
             var calendars = await _calendarRepo.Get(x => x.OwnerId == id)
-                .Include(x => x.Type)
                 .Include(x => x.Colour)
                 .Select(x => new CalendarDTO
                 {
+                    Id = x.Id,
                     Name = x.Name,
-                    Type = x.Type.Type,
                     OwnerId = x.OwnerId,
-                    Colour = x.Colour.ColourName,
+                    ColourId = x.Colour.Id,
                     Description = x.Description
                 })
                 .ToListAsync();
@@ -48,8 +47,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Name = dto.Name,
                     Description = dto.Description,
                     OwnerId = dto.OwnerId,
-                    ColourId = (int)Enum.Parse(typeof(Colours), dto.Colour),
-                    TypeId = (int)Enum.Parse(typeof(CalendarTypes), dto.Type)
+                    ColourId = dto.ColourId
                 }; 
 
                 _calendarRepo.Insert(calendar);
@@ -60,7 +58,6 @@ namespace AINT354_Mobile_API.BusinessLogic
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
 
@@ -80,7 +77,6 @@ namespace AINT354_Mobile_API.BusinessLogic
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
     }
