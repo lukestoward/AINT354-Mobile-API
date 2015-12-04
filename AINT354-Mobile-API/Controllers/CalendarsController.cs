@@ -51,9 +51,9 @@ namespace AINT354_Mobile_API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IHttpActionResult> Delete(int id)
+        public async Task<IHttpActionResult> Delete(string id)
         {
-            if (id == 0) { return BadRequest(); }
+            if (id == string.Empty) { return BadRequest(); }
 
             var success = await _calendarService.DeleteCalendar(id);
 

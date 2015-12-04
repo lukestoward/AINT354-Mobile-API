@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AINT354_Mobile_API.Models
 {
-    public class Calendar : BaseEntity
+    public class Calendar
     {
         public Calendar()
         {
             CreatedDate = DateTime.Now;
             Events = new List<Event>();
         }
+
+        //Manually added Guid Id
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }

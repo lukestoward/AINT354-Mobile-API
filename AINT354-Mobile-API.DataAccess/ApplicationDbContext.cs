@@ -41,8 +41,5 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<EventComment> EventComments { get; set; }
 
-    public DbSet<EventType> EventTypes { get; set; }
-
     public DbSet<User> Users { get; set; }
-
 }

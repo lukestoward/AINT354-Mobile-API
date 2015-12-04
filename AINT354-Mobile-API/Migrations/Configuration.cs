@@ -29,9 +29,33 @@ namespace AINT354_Mobile_API.Migrations
             );
             context.SaveChanges();
 
+            Guid calendarId = Guid.NewGuid();
+
             context.Calendars.AddOrUpdate(p => p.Name,
-                new Calendar { Name = "Home", ColourId = 1, Description = "My calendar for home", OwnerId = 1 }
+                new Calendar { Id = calendarId, Name = "Home", ColourId = 1, Description = "My calendar for home", OwnerId = 1 }
               
+            );
+
+            //Add sample events
+            context.Events.AddOrUpdate(p => p.StartDateTime,
+                new Event
+                {
+                    Id = Guid.NewGuid(), CalendarId = calendarId, CreatorId = 1, CreatedDate = DateTime.Now, Title = "My First Event", Body = "This is the body text", Location = "My House",
+                    AllDay = false, StartDateTime = DateTime.Now.AddDays(1), EndDateTime = DateTime.Now.AddDays(1).AddHours(2)
+                },
+
+                new Event
+                {
+                    Id = Guid.NewGuid(), CalendarId = calendarId, CreatorId = 1, CreatedDate = DateTime.Now.AddHours(1), Title = "My Second Event", Body = "This is the body text", Location = "Uni",
+                    AllDay = false, StartDateTime = DateTime.Now.AddHours(2), EndDateTime = DateTime.Now.AddHours(2).AddMinutes(30)
+                },
+
+                new Event
+                {
+                    Id = Guid.NewGuid(), CalendarId = calendarId, CreatorId = 1, CreatedDate = DateTime.Now.AddDays(2), Title = "My Third Event", Body = "This is the body text", Location = "4 Allendale Road",
+                    AllDay = false, StartDateTime = DateTime.Now.AddDays(3), EndDateTime = DateTime.Now.AddDays(3).AddHours(4)
+                }
+
             );
         }
     }

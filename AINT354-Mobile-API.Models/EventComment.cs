@@ -11,7 +11,7 @@ namespace AINT354_Mobile_API.Models
         }
 
         [Required]
-        public int EventId { get; set; }
+        public Guid EventId { get; set; }
         public Event Event { get; set; }
 
         [Required]

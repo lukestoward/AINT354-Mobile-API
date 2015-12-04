@@ -166,13 +166,14 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\CalendarsController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201510231102478_Initial.cs" />
-    <Compile Include="Migrations\201510231102478_Initial.Designer.cs">
-      <DependentUpon>201510231102478_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201512041723230_Initial.cs" />
+    <Compile Include="Migrations\201512041723230_Initial.Designer.cs">
+      <DependentUpon>201512041723230_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -238,11 +239,6 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201510231102478_Initial.resx">
-      <DependentUpon>201510231102478_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AINT354-Mobile-API.BusinessLogic\AINT354-Mobile-API.BusinessLogic.csproj">
       <Project>{06a21128-345e-4df6-8bb0-32ab38926e2c}</Project>
       <Name>AINT354-Mobile-API.BusinessLogic</Name>
@@ -259,6 +255,11 @@
       <Project>{bb1df3ee-356a-4281-a52e-50f2da83b3dd}</Project>
       <Name>AINT354-Mobile-API.Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201512041723230_Initial.resx">
+      <DependentUpon>201512041723230_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

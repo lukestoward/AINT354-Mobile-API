@@ -27,7 +27,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 .Include(x => x.Colour)
                 .Select(x => new CalendarDTO
                 {
-                    Id = x.Id,
+                    Id = x.Id.ToString(),
                     Name = x.Name,
                     OwnerId = x.OwnerId,
                     ColourId = x.Colour.Id,
@@ -42,8 +42,13 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
+                //Parse guid
+                Guid? guid = ParseGuid(dto.Id);
+                if (guid == null) return false;
+
                 Calendar calendar = new Calendar
                 {
+                    Id = guid.Value,
                     Name = dto.Name,
                     Description = dto.Description,
                     OwnerId = dto.OwnerId,
@@ -61,11 +66,15 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
         }
 
-        public async Task<bool> DeleteCalendar(int id)
+        public async Task<bool> DeleteCalendar(string id)
         {
             try
             {
-                var calendar = await _calendarRepo.GetByIdAsync(id);
+                //Parse guid
+                Guid? guid = ParseGuid(id);
+                if (guid == null) return false;
+
+                var calendar = await _calendarRepo.GetByIdAsync(guid.Value);
 
                 if (calendar == null) return false;
 

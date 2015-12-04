@@ -13,7 +13,7 @@ namespace AINT354_Mobile_API.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201510231102478_Initial"; }
+            get { return "201512041723230_Initial"; }
         }
         
         string IMigrationMetadata.Source

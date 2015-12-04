@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="BaseLogic.cs" />
     <Compile Include="CalendarService.cs" />
+    <Compile Include="EventService.cs" />
     <Compile Include="LookUpEnums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

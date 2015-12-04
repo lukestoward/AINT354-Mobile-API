@@ -10,7 +10,7 @@ namespace AINT354_Mobile_API.ModelDTOs
     public class CalendarDTO
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public string Name { get; set; }
