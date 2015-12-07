@@ -99,12 +99,20 @@ namespace AINT354_Mobile_API.BusinessLogic
                     EndDateTime = DateTime.Parse(model.EndDateTime)
                 };
 
+                //If all day event override start/end times
+                if (newEvent.AllDay)
+                {
+                    newEvent.StartDateTime = newEvent.StartDateTime.Date; //Trims the time off the date
+                    newEvent.EndDateTime= newEvent.EndDateTime.Date.AddDays(1);//Rounds to the start of the next day
+                }
+
+
                 _eventRepo.Insert(newEvent);
                 await SaveChangesAsync();
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

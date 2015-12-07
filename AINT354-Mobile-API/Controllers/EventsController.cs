@@ -23,6 +23,11 @@ namespace AINT354_Mobile_API.Controllers
             _eventService = new EventService();
         }
 
+        /// <summary>
+        /// Returns a list of simplified events for a specified calendar
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [ResponseType(typeof (List<EventDTO>))]
         public async Task<IHttpActionResult> CalendarEvents(string id)
@@ -34,6 +39,11 @@ namespace AINT354_Mobile_API.Controllers
             return Ok(events);
         }
 
+        /// <summary>
+        /// Returns the full details of an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [ResponseType(typeof(EventDetailsDTO))]
         public async Task<IHttpActionResult> EventDetails(string id)
@@ -45,6 +55,11 @@ namespace AINT354_Mobile_API.Controllers
             return Ok(eventDetails);
         }
 
+        /// <summary>
+        /// Creates a new event
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IHttpActionResult> Create(EventCreateDTO model)
         {
@@ -60,6 +75,11 @@ namespace AINT354_Mobile_API.Controllers
             return BadRequest("Unable to create the event! :(");
         }
 
+        /// <summary>
+        /// Deletes an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         public async Task<IHttpActionResult> Delete(string id)
         {
@@ -74,9 +94,6 @@ namespace AINT354_Mobile_API.Controllers
 
             return BadRequest("Unable to delete event ID:" + id);
         }
-
-
-
 
         protected override void Dispose(bool disposing)
         {

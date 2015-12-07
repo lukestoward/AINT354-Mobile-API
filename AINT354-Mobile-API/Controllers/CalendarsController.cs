@@ -24,6 +24,11 @@ namespace AINT354_Mobile_API.Controllers
             _calendarService = new CalendarService();
         }
 
+        /// <summary>
+        /// Returns a list of calendars for the specified user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [ResponseType(typeof(List<CalendarDTO>))]
         public async Task<IHttpActionResult> GetUserCalendars(int id)
@@ -35,6 +40,11 @@ namespace AINT354_Mobile_API.Controllers
             return Ok(calendars);
         }
         
+        /// <summary>
+        /// Creates a new calendar for a user
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IHttpActionResult> Create(CalendarDTO calendar)
         {
@@ -50,6 +60,11 @@ namespace AINT354_Mobile_API.Controllers
             return BadRequest("Unable to create the new calendar");
         }
 
+        /// <summary>
+        /// Used to delete a calendar for the specified user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         public async Task<IHttpActionResult> Delete(string id)
         {

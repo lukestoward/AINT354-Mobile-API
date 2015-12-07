@@ -88,5 +88,17 @@ namespace AINT354_Mobile_API.BusinessLogic
                 return false;
             }
         }
+
+        public async Task<bool> CalendarExist(string id)
+        {
+            //Parse guid
+            Guid? guid = ParseGuid(id);
+            if (guid == null) return false;
+
+            var cal = await _calendarRepo.GetByIdAsync(guid);
+
+            //Return true if we have a calendar
+            return cal != null;
+        }
     }
 }

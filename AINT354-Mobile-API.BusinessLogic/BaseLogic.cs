@@ -8,6 +8,8 @@ namespace AINT354_Mobile_API.BusinessLogic
     {
         protected readonly UnitOfWork UoW = new UnitOfWork();
 
+        protected ValidationResult Result = new ValidationResult();
+
         protected string FormatDateString(string date)
         {
             //Convert the dates in to specific formats
