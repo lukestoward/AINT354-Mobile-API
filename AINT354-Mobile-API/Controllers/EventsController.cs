@@ -65,14 +65,14 @@ namespace AINT354_Mobile_API.Controllers
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
-            var success = await _eventService.CreateEvent(model);
+            var result = await _eventService.CreateEvent(model);
 
-            if (success)
+            if (result.Success)
             {
                 return Ok();
             }
 
-            return BadRequest("Unable to create the event! :(");
+            return BadRequest(result.Error);
         }
 
         /// <summary>

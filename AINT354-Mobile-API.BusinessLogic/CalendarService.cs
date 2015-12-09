@@ -15,25 +15,26 @@ namespace AINT354_Mobile_API.BusinessLogic
     {
         //Session Repository
         private readonly GenericRepository<Calendar> _calendarRepo;
+        private readonly GenericRepository<CalendarMember> _calendarMemberRepo;
 
         public CalendarService()
         {
             _calendarRepo = UoW.Repository<Calendar>();
+            _calendarMemberRepo = UoW.Repository<CalendarMember>();
         }
 
         public async Task<List<CalendarDTO>> GetUserCalendars(int id)
         {
-            var calendars = await _calendarRepo.Get(x => x.OwnerId == id)
-                .Include(x => x.Colour)
+            //Search the calendar members table and pull out the users calendars
+            var calendars = await _calendarMemberRepo.Get(x => x.UserId == id)
                 .Select(x => new CalendarDTO
                 {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    OwnerId = x.OwnerId,
-                    ColourId = x.Colour.Id,
-                    Description = x.Description
-                })
-                .ToListAsync();
+                    Id = x.CalendarId.ToString(),
+                    Name = x.Calendar.Name,
+                    OwnerId = x.Calendar.OwnerId,
+                    ColourId = x.Calendar.Colour.Id,
+                    Description = x.Calendar.Description
+                }).ToListAsync();
 
             return calendars;
         }
@@ -54,6 +55,13 @@ namespace AINT354_Mobile_API.BusinessLogic
                     OwnerId = dto.OwnerId,
                     ColourId = dto.ColourId
                 }; 
+
+                //Add creator as a member of the calendar
+                calendar.Members.Add(new CalendarMember
+                {
+                    CalendarId = calendar.Id,
+                    UserId = calendar.OwnerId
+                });
 
                 _calendarRepo.Insert(calendar);
                 await SaveChangesAsync();
@@ -95,7 +103,7 @@ namespace AINT354_Mobile_API.BusinessLogic
             Guid? guid = ParseGuid(id);
             if (guid == null) return false;
 
-            var cal = await _calendarRepo.GetByIdAsync(guid);
+            var cal = await _calendarRepo.GetByIdAsync(guid.Value);
 
             //Return true if we have a calendar
             return cal != null;

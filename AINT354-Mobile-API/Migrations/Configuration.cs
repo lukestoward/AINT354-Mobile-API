@@ -25,7 +25,8 @@ namespace AINT354_Mobile_API.Migrations
             context.SaveChanges();
 
             context.Users.AddOrUpdate(p => p.Email,
-                new User { Id = 1, Name = "Luke Stoward", Email = "luke@email.com", DeviceId = "34jk2kjh2"}
+                new User { Id = 1, Name = "Luke Stoward", Email = "luke@email.com", DeviceId = "34jk2kjh2" },
+                new User { Id = 2, Name = "Thomas Kraaijeveld", Email = "thomaskraaijeveld@hotmail.com", DeviceId = "654asfsf5" }
             );
             context.SaveChanges();
 
@@ -93,6 +94,13 @@ namespace AINT354_Mobile_API.Migrations
 
                     );
             }
+
+            context.InvitationTypes.AddOrUpdate(x => x.Name, 
+                new InvitationType { Name = "Calendar" },
+                new InvitationType { Name = "Event" } );
+
+            context.SaveChanges();
+            
         }
     }
 }

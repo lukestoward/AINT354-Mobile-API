@@ -11,6 +11,7 @@ namespace AINT354_Mobile_API.Models
         {
             CreatedDate = DateTime.Now;
             Comments = new List<EventComment>();
+            Members = new List<EventMember>();
         }
 
         [Required]
@@ -45,5 +46,7 @@ namespace AINT354_Mobile_API.Models
         public DateTime EndDateTime { get; set; }
         
         public ICollection<EventComment> Comments { get; set; }
+
+        public ICollection<EventMember> Members { get; set; }
     }
 }

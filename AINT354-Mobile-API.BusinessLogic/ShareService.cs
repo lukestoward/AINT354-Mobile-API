@@ -15,42 +15,138 @@ namespace AINT354_Mobile_API.BusinessLogic
         //User Repository
         private readonly GenericRepository<User> _userRepo;
         private readonly CalendarService _calendarService;
+        private readonly EventService _eventService;
+        private readonly InvitationService _invitationService;
 
         public ShareService()
         {
             _userRepo = UoW.Repository<User>();
             _calendarService = new CalendarService();
+            _eventService = new EventService();
+            _invitationService = new InvitationService();
         }
 
-        public async Task<bool> ShareCalendar(ShareDetails model)
+        public async Task<ValidationResult> ShareCalendar(ShareDetails model)
         {
-            //Check calendar exists
-            bool exists = await _calendarService.CalendarExist(model.CalendarId);
+            try
+            {
+                //Check calendar exists
+                bool exists = await _calendarService.CalendarExist(model.CalendarId);
 
-            if (!exists) return false;
+                if (!exists)
+                {
+                    Result.Error = "Calendar was not found";
+                    return Result;
+                }
 
-            //Check if the recipient is a member of the app
-            var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
+                //Check if the recipient is a member of the app
+                var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
 
-            //If this user isn't registered send invite email
-            if (user == null) return await SendInvitationEmail(model);
+                //If this user isn't registered send invite email
+                if (user == null)
+                {
+                    await SendInvitationEmail(model);
+                    Result.Success = true;
+                    return Result;
+                }
 
-            //TODO: Create and send notification to recipients
 
-            return true;
+                //Parse guid
+                Guid? guid = ParseGuid(model.CalendarId);
+                if (guid == null) return Result;
+                
+                //Check for an existing calendar invitation
+                Invitation existingInvitation = await _invitationService.CheckForDuplicates(user.Id, model.SenderUserId, guid.Value, null);
+
+                if (existingInvitation != null)
+                {
+                    Result.Error = "An invitation matching the specified values already exists";
+                    return Result;
+                }
+
+                //Assuming we have a registered user and no existing invitation, create a new one
+                Invitation inv = new Invitation
+                {
+                    CalendarId = guid.Value,
+                    RecipientId = user.Id,
+                    SenderId = model.SenderUserId,
+                    TypeId = (int)LookUpEnums.InvitationTypes.Calendar
+                };
+
+                await _invitationService.AddInvitation(inv);
+
+                //Finally send out GCM notification
+                //TODO: Send GCM notification
+
+                Result.Success = true;
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                Result.Error = ex.Message;
+                return Result;
+            }
         }
 
-        public async Task<bool> ShareEvent(ShareDetails model)
+        public async Task<ValidationResult> ShareEvent(ShareDetails model)
         {
-            var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
+            try
+            {
+                //Check Event exists
+                bool exists = await _eventService.EventExist(model.EventId);
 
-            //If this user isn't registered send invite email
-            if (user == null) return await SendInvitationEmail(model);
+                if (!exists)
+                {
+                    Result.Error = "Event was not found";
+                    return Result;
+                }
 
+                //Check if the recipient is a member of the app
+                var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
 
-            //TODO: Create and send notification to recipients
+                //If this user isn't registered send invite email
+                if (user == null)
+                {
+                    await SendInvitationEmail(model);
+                    Result.Success = true;
+                    return Result;
+                }
 
-            return true;
+                //Parse guid
+                Guid? guid = ParseGuid(model.EventId);
+                if (guid == null) return Result;
+
+                //Check for an existing event invitation
+                Invitation existingInvitation = await _invitationService.CheckForDuplicates(user.Id, model.SenderUserId, null, guid.Value);
+
+                if (existingInvitation != null)
+                {
+                    Result.Error = "An invitation matching the specified values already exists";
+                    return Result;
+                }
+
+                //Assuming we have a registered user create an invitation
+                Invitation inv = new Invitation
+                {
+                    EventId = guid.Value,
+                    RecipientId = user.Id,
+                    SenderId = model.SenderUserId,
+                    TypeId = (int)LookUpEnums.InvitationTypes.Event
+                };
+
+                await _invitationService.AddInvitation(inv);
+
+                //Finally send out GCM notification
+                //TODO: Send GCM notification
+
+                Result.Success = true;
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                Result.Error = ex.Message;
+                return Result;
+            }
         }
 
         private async Task<bool> SendInvitationEmail(ShareDetails model)

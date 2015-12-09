@@ -34,12 +34,21 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<Calendar> Calendars { get; set; }
+
+    public DbSet<CalendarMember> CalendarMembers { get; set; }
     
     public DbSet<Colour> Colours { get; set; }
 
     public DbSet<Event> Events { get; set; }
 
+    public DbSet<EventMember> EventMembers { get; set; }
+    
     public DbSet<EventComment> EventComments { get; set; }
 
     public DbSet<User> Users { get; set; }
+
+    public DbSet<Invitation> Invitations { get; set; }
+
+    public DbSet<InvitationType> InvitationTypes { get; set; }
+
 }

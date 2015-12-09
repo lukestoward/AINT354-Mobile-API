@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,16 +76,26 @@ namespace AINT354_Mobile_API.BusinessLogic
             return eventDetails;
         }
 
-        public async Task<bool> CreateEvent(EventCreateDTO model)
+        public async Task<ValidationResult> CreateEvent(EventCreateDTO model)
         {
             try
             {
                 //Parse guid(s)
                 Guid? id = ParseGuid(model.Id);
-                if (id == null) return false;
+                if (id == null)
+                {
+                    Result.Success = false;
+                    Result.Error = "Failed to parse provided Id";
+                    return Result;
+                }
 
                 Guid? calId = ParseGuid(model.CalendarId);
-                if (calId == null) return false;
+                if (calId == null)
+                {
+                    Result.Success = false;
+                    Result.Error = "Failed to parse provided CalendarId";
+                    return Result;
+                }
 
                 Event newEvent = new Event
                 {
@@ -95,8 +106,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Body = model.Body,
                     Location = model.Location,
                     AllDay = model.AllDay,
-                    StartDateTime = DateTime.Parse(model.StartDateTime),
-                    EndDateTime = DateTime.Parse(model.EndDateTime)
+                    StartDateTime = ParseUKDate(model.StartDateTime),
+                    EndDateTime = ParseUKDate(model.EndDateTime)
                 };
 
                 //If all day event override start/end times
@@ -110,11 +121,18 @@ namespace AINT354_Mobile_API.BusinessLogic
                 _eventRepo.Insert(newEvent);
                 await SaveChangesAsync();
 
-                return true;
+                Result.Success = true;
+                return Result;
             }
             catch (Exception ex)
             {
-                return false;
+                Result.Success = false;
+                Result.Error = ex.Message;
+
+                if (ex.InnerException != null) ;
+                Result.Error += "\nInner exception: " + ex.InnerException;
+
+                return Result;
             }
         }
 
@@ -139,6 +157,18 @@ namespace AINT354_Mobile_API.BusinessLogic
             {
                 return false;
             }
+        }
+
+        public async Task<bool> EventExist(string eventId)
+        {
+            //Parse guid
+            Guid? guid = ParseGuid(eventId);
+            if (guid == null) return false;
+
+            var evnt = await _eventRepo.GetByIdAsync(guid.Value);
+
+            //Return true if we have a calendar
+            return evnt != null;
         }
     }
 }

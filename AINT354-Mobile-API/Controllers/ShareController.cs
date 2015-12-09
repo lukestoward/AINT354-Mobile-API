@@ -30,14 +30,14 @@ namespace AINT354_Mobile_API.Controllers
 
             if (!ModelState.IsValid) { return BadRequest("Missing required information"); }
 
-            var success = await _shareService.ShareCalendar(model);
+            var result = await _shareService.ShareCalendar(model);
 
-            if (success)
+            if (result.Success)
             {
                 return Ok();
             }
 
-            return BadRequest("Unable to share the calendar! :(");
+            return BadRequest(result.Error);
         }
 
         /// <summary>
@@ -51,14 +51,14 @@ namespace AINT354_Mobile_API.Controllers
 
             if (!ModelState.IsValid) { return BadRequest("Missing required information"); }
 
-            var success = await _shareService.ShareEvent(model);
+            var result = await _shareService.ShareEvent(model);
 
-            if (success)
+            if (result.Success)
             {
                 return Ok();
             }
 
-            return BadRequest("Unable to share the calendar! :(");
+            return BadRequest(result.Error);
         }
 
         protected override void Dispose(bool disposing)

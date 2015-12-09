@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using GamingSessionApp.DataAccess;
 
@@ -15,6 +16,11 @@ namespace AINT354_Mobile_API.BusinessLogic
             //Convert the dates in to specific formats
             DateTime dt = DateTime.Parse(date);
             return dt.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+
+        protected DateTime ParseUKDate(string dateTime)
+        {
+            return DateTime.ParseExact(dateTime, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
         }
 
         protected Guid? ParseGuid(string src)

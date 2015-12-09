@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace AINT354_Mobile_API.BusinessLogic
 {
-    public class AndroidGCMPushNotification
+    public static class AndroidGCMPushNotification
     {
-        public AndroidGCMPushNotification()
-        {
-            
-        }
-        public string SendNotification(string deviceId, string message)
+        public static string SendNotification(string deviceId, string message)
         {
             string SERVER_API_KEY = "AIzaSyCPn-39zi5pljrmhQJgj2PLHUnT_CRJCwo";
             var SENDER_ID = "197149327166";

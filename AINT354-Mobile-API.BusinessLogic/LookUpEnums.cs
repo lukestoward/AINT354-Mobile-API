@@ -21,5 +21,11 @@ namespace AINT354_Mobile_API.BusinessLogic
             Public = 1,
             Private = 2
         }
+
+        public enum InvitationTypes
+        {
+            Calendar = 1,
+            Event = 2
+        }
     }
 }

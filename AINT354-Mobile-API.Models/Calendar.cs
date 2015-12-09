@@ -14,6 +14,7 @@ namespace AINT354_Mobile_API.Models
         {
             CreatedDate = DateTime.Now;
             Events = new List<Event>();
+            Members = new List<CalendarMember>();
         }
 
         //Manually added Guid Id
@@ -38,6 +39,8 @@ namespace AINT354_Mobile_API.Models
         public User Owner { get; set; }
 
         public ICollection<Event> Events { get; set; }
+
+        public ICollection<CalendarMember> Members { get; set; }
 
     }
 }
