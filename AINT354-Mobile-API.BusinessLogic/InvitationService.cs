@@ -75,6 +75,13 @@ namespace AINT354_Mobile_API.BusinessLogic
                     return Result;
                 }
 
+                //Make sure we aren't processing a previously processed invite
+                if (inv.Responded)
+                {
+                    Result.Error = "Invitation has already been processed";
+                    return Result;
+                }
+
                 //If we are accepting the invitation
                 if (model.Accept)
                 {
@@ -84,7 +91,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                         //If calendar add member to calendar
                         case (int)LookUpEnums.InvitationTypes.Calendar:
 
-                            Calendar cal = await _calendarRepo.GetByIdAsync(inv.CalendarId);
+                            Calendar cal = await _calendarRepo.Get(x => x.Id == inv.CalendarId.Value)
+                                .Include(x => x.Members).FirstOrDefaultAsync();
 
                             if (cal == null)
                             {
@@ -92,15 +100,21 @@ namespace AINT354_Mobile_API.BusinessLogic
                                 return Result;
                             }
 
-                            cal.Members.Add(new CalendarMember { CalendarId = cal.Id, UserId = inv.RecipientId });
+                            //Only add the user if they aren't already a member
+                            if (cal.Members.All(x => x.UserId != inv.RecipientId))
+                            {
+                                cal.Members.Add(new CalendarMember { UserId = inv.RecipientId});
 
-                            _calendarRepo.Update(cal);
-                        
+                                _calendarRepo.Update(cal);
+                            }
+
                             break;
 
+                        //If Event add member to event
                         case (int)LookUpEnums.InvitationTypes.Event:
 
-                            Event evnt = await _eventRepo.GetByIdAsync(inv.EventId);
+                            Event evnt = await _eventRepo.Get(x => x.Id == inv.EventId.Value)
+                                .Include(x => x.Members).FirstOrDefaultAsync();
 
                             if (evnt == null)
                             {
@@ -108,9 +122,13 @@ namespace AINT354_Mobile_API.BusinessLogic
                                 return Result;
                             }
 
-                            evnt.Members.Add(new EventMember { EventId = evnt.Id, UserId = inv.RecipientId });
+                            //Only add the user if they aren't already a member
+                            if (evnt.Members.All(x => x.UserId != inv.RecipientId))
+                            {
+                                evnt.Members.Add(new EventMember { UserId = inv.RecipientId });
 
-                            _eventRepo.Update(evnt);
+                                _eventRepo.Update(evnt);
+                            }
 
                             break;
                     }

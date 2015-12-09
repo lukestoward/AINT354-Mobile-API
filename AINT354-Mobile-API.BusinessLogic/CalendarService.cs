@@ -54,12 +54,11 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Description = dto.Description,
                     OwnerId = dto.OwnerId,
                     ColourId = dto.ColourId
-                }; 
-
+                };
+                
                 //Add creator as a member of the calendar
                 calendar.Members.Add(new CalendarMember
                 {
-                    CalendarId = calendar.Id,
                     UserId = calendar.OwnerId
                 });
 
