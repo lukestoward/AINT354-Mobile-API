@@ -84,7 +84,6 @@ namespace AINT354_Mobile_API.BusinessLogic
                 Guid? id = ParseGuid(model.Id);
                 if (id == null)
                 {
-                    Result.Success = false;
                     Result.Error = "Failed to parse provided Id";
                     return Result;
                 }
@@ -92,7 +91,6 @@ namespace AINT354_Mobile_API.BusinessLogic
                 Guid? calId = ParseGuid(model.CalendarId);
                 if (calId == null)
                 {
-                    Result.Success = false;
                     Result.Error = "Failed to parse provided CalendarId";
                     return Result;
                 }
@@ -126,11 +124,72 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
             catch (Exception ex)
             {
-                Result.Success = false;
                 Result.Error = ex.Message;
 
-                if (ex.InnerException != null) ;
+                if (ex.InnerException != null)
                 Result.Error += "\nInner exception: " + ex.InnerException;
+
+                return Result;
+            }
+        }
+
+        public async Task<ValidationResult> UpdateEvent(EventCreateDTO model)
+        {
+            try
+            {
+                //Parse guid(s)
+                Guid? id = ParseGuid(model.Id);
+                if (id == null)
+                {
+                    Result.Error = "Failed to parse provided Id";
+                    return Result;
+                }
+
+                Guid? calId = ParseGuid(model.CalendarId);
+                if (calId == null)
+                {
+                    Result.Error = "Failed to parse provided CalendarId";
+                    return Result;
+                }
+
+                //Load the event from the db
+                Event evnt = await _eventRepo.GetByIdAsync(id.Value);
+
+                if (evnt == null)
+                {
+                    Result.Error = "404 : Event not found";
+                    return Result;
+                }
+
+                //Update properties
+                evnt.CalendarId = calId.Value;
+                evnt.Title = model.Title;
+                evnt.Body = model.Body;
+                evnt.Location = model.Location;
+                evnt.AllDay = model.AllDay;
+                evnt.StartDateTime = ParseUKDate(model.StartDateTime);
+                evnt.EndDateTime = ParseUKDate(model.EndDateTime);
+
+                //If all day event override start/end times
+                if (evnt.AllDay)
+                {
+                    evnt.StartDateTime = evnt.StartDateTime.Date; //Trims the time off the date
+                    evnt.EndDateTime = evnt.EndDateTime.Date.AddDays(1);//Rounds to the start of the next day
+                }
+
+                _eventRepo.Update(evnt);
+                await SaveChangesAsync();
+
+                Result.Success = true;
+                return Result;
+
+            }
+            catch (Exception ex)
+            {
+                Result.Error = ex.Message;
+
+                if (ex.InnerException != null)
+                    Result.Error += "\nInner exception: " + ex.InnerException;
 
                 return Result;
             }

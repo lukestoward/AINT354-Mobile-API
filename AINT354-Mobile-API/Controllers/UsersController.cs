@@ -29,12 +29,19 @@ namespace AINT354_Mobile_API.Controllers
         public async Task<IHttpActionResult> Register(RegisterUser model)
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
-
+            
             var result = await _userService.RegisterUser(model);
 
             if (result.Success)
             {
-                return Ok();
+                int userId = await  _userService.GetUserId(model.FacebookId);
+
+                if (userId == 0)
+                {
+                    return BadRequest("Error retrieving the UserId.");
+                }
+
+                return Ok(userId);
             }
 
             return BadRequest(result.Error);

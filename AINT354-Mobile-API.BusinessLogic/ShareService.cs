@@ -75,8 +75,14 @@ namespace AINT354_Mobile_API.BusinessLogic
 
                 await _invitationService.AddInvitation(inv);
 
+                string senderName =
+                    await _userRepo.Get(x => x.Id == model.SenderUserId).Select(x => x.Name).FirstAsync();
+
                 //Finally send out GCM notification
-                //TODO: Send GCM notification
+                string message = $"{senderName} wants to share their Calendar";
+
+                //Send the notification
+                AndroidGCMPushNotification.SendNotification(user.DeviceId, message);
 
                 Result.Success = true;
                 return Result;
@@ -136,8 +142,14 @@ namespace AINT354_Mobile_API.BusinessLogic
 
                 await _invitationService.AddInvitation(inv);
 
+                string senderName =
+                    await _userRepo.Get(x => x.Id == model.SenderUserId).Select(x => x.Name).FirstAsync();
+
                 //Finally send out GCM notification
-                //TODO: Send GCM notification
+                string message = $"{senderName} wants to share their Calendar";
+
+                //Send the notification
+                AndroidGCMPushNotification.SendNotification(user.DeviceId, message);
 
                 Result.Success = true;
                 return Result;

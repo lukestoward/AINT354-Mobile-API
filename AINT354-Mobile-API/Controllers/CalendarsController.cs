@@ -60,6 +60,21 @@ namespace AINT354_Mobile_API.Controllers
             return BadRequest("Unable to create the new calendar");
         }
 
+        [HttpPut]
+        public async Task<IHttpActionResult> Update(CalendarDTO calendar)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var result = await _calendarService.UpdateCalendar(calendar);
+
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest(result.Error);
+        }
+
         /// <summary>
         /// Used to delete a calendar for the specified user
         /// </summary>

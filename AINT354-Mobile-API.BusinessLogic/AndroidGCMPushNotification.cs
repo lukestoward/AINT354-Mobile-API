@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace AINT354_Mobile_API.BusinessLogic
 {
@@ -22,7 +23,7 @@ namespace AINT354_Mobile_API.BusinessLogic
 
             tRequest.Headers.Add(string.Format("Sender: id={0}", SENDER_ID));
 
-            string postData = "collapse_key=score_update&time_to_live=108&delay_while_idle=1&data.message=" + value + "&data.time=" + DateTime.Now + "&registration_id=" + deviceId + "";
+            string postData = "time_to_live=108&priority=high&data.message=" + value + "&data.time=" + DateTime.Now + "&registration_id=" + deviceId + "";
             Console.WriteLine(postData);
             Byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             tRequest.ContentLength = byteArray.Length;
@@ -44,6 +45,22 @@ namespace AINT354_Mobile_API.BusinessLogic
             dataStream.Close();
             tResponse.Close();
             return sResponseFromServer;
+        }
+    }
+
+    public static class JSONHelper
+    {
+        public static string ToJSON(this object obj)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Serialize(obj);
+        }
+
+        public static string ToJSON(this object obj, int recursionDepth)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.RecursionLimit = recursionDepth;
+            return serializer.Serialize(obj);
         }
     }
 }

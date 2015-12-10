@@ -73,6 +73,40 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
         }
 
+        public async Task<ValidationResult> UpdateCalendar(CalendarDTO model)
+        {
+            try
+            {
+                //Parse guid
+                Guid? guid = ParseGuid(model.Id);
+                if (guid == null) return Result;
+
+                //Find calendar in db
+                var calendar = await _calendarRepo.GetByIdAsync(guid.Value);
+
+                if (calendar == null)
+                {
+                    Result.Error = "Calendar not found!";
+                    return Result;
+                }
+
+                calendar.ColourId = model.ColourId;
+                calendar.Description = model.Description;
+                calendar.Name = model.Name;
+
+                _calendarRepo.Update(calendar);
+                await SaveChangesAsync();
+
+                Result.Success = true;
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                Result.Error = ex.Message;
+                return Result;
+            }
+        }
+
         public async Task<bool> DeleteCalendar(string id)
         {
             try

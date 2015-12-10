@@ -25,7 +25,7 @@ namespace AINT354_Mobile_API.BusinessLogic
             try
             {
                 //Check user doesn't already exist
-                var user = await _userRepo.Get(x => x.Email == model.Email || x.DeviceId == model.DeviceId)
+                var user = await _userRepo.Get(x => x.Email == model.Email)
                     .FirstOrDefaultAsync();
 
                 //If the user already exists return the error
@@ -33,8 +33,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                 {
                     if (user.Email == model.Email)
                         Result.Error = $"A user with the email {model.Email} already exists";
-                    else if(user.DeviceId == model.DeviceId)
-                        Result.Error = $"A user with the deviceId {model.DeviceId} already exists";
+                    //else if(user.DeviceId == model.DeviceId)
+                    //    Result.Error = $"A user with the deviceId {model.DeviceId} already exists";
 
                     Result.Success = false;
                     return Result;
@@ -44,7 +44,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                 {
                     Email = model.Email,
                     Name = model.FullName,
-                    DeviceId = model.DeviceId
+                    DeviceId = model.DeviceId,
+                    FacebookId = model.FacebookId
                 };
 
                 _userRepo.Insert(newUser);
@@ -59,8 +60,21 @@ namespace AINT354_Mobile_API.BusinessLogic
             catch (Exception ex)
             {
                 Result.Error = ex.Message;
-                Result.Success = false;
                 return Result;
+            }
+        }
+
+        public async Task<int> GetUserId(long facebookId)
+        {
+            try
+            {
+                var user = await _userRepo.Get(x => x.FacebookId == facebookId).FirstOrDefaultAsync();
+
+                return user?.Id ?? 0;
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
     }
