@@ -47,6 +47,21 @@ namespace AINT354_Mobile_API.Controllers
             return BadRequest(result.Error);
         }
 
+        [HttpGet]
+        public async Task<IHttpActionResult> ValidateUser(long id)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var userId = await _userService.GetUserId(id);
+
+            if (userId == 0)
+            {
+                return BadRequest("User could not be found!");
+            }
+
+            return Ok(userId);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

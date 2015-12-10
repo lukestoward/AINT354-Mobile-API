@@ -14,15 +14,15 @@ namespace AINT354_Mobile_API.BusinessLogic
     {
         //User Repository
         private readonly GenericRepository<User> _userRepo;
-        private readonly CalendarService _calendarService;
-        private readonly EventService _eventService;
+        private readonly GenericRepository<Calendar> _calendarRepo;
+        private readonly GenericRepository<Event> _eventRepo;
         private readonly InvitationService _invitationService;
 
         public ShareService()
         {
             _userRepo = UoW.Repository<User>();
-            _calendarService = new CalendarService();
-            _eventService = new EventService();
+            _calendarRepo = UoW.Repository<Calendar>();
+            _eventRepo = UoW.Repository<Event>();
             _invitationService = new InvitationService();
         }
 
@@ -30,14 +30,16 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
-                //Check calendar exists
-                bool exists = await _calendarService.CalendarExist(model.CalendarId);
+                //Parse guid
+                Guid? guid = ParseGuid(model.CalendarId);
+                if (guid == null) return AddError("Unable to parse calendarId");
 
-                if (!exists)
-                {
-                    Result.Error = "Calendar was not found";
-                    return Result;
-                }
+                //Check calendar exists
+                var cal = await _calendarRepo.Get(x => x.Id == guid.Value)
+                    .Include(x => x.Owner).FirstOrDefaultAsync();
+
+                if (cal == null)
+                    return AddError("Calendar was not found");
 
                 //Check if the recipient is a member of the app
                 var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
@@ -49,20 +51,12 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Result.Success = true;
                     return Result;
                 }
-
-
-                //Parse guid
-                Guid? guid = ParseGuid(model.CalendarId);
-                if (guid == null) return Result;
                 
                 //Check for an existing calendar invitation
                 Invitation existingInvitation = await _invitationService.CheckForDuplicates(user.Id, model.SenderUserId, guid.Value, null);
 
                 if (existingInvitation != null)
-                {
-                    Result.Error = "An invitation matching the specified values already exists";
-                    return Result;
-                }
+                    return AddError("An invitation matching the specified values already exists");
 
                 //Assuming we have a registered user and no existing invitation, create a new one
                 Invitation inv = new Invitation
@@ -70,16 +64,14 @@ namespace AINT354_Mobile_API.BusinessLogic
                     CalendarId = guid.Value,
                     RecipientId = user.Id,
                     SenderId = model.SenderUserId,
-                    TypeId = (int)LookUpEnums.InvitationTypes.Calendar
+                    TypeId = (int)LookUpEnums.InvitationTypes.Calendar,
+                    DisplayMessage = $"{cal.Owner.Name} has invited you to share their calendar \"{cal.Name}\""
                 };
 
                 await _invitationService.AddInvitation(inv);
-
-                string senderName =
-                    await _userRepo.Get(x => x.Id == model.SenderUserId).Select(x => x.Name).FirstAsync();
-
+                
                 //Finally send out GCM notification
-                string message = $"{senderName} wants to share their Calendar";
+                string message = $"{cal.Owner.Name} wants to share their Calendar";
 
                 //Send the notification
                 AndroidGCMPushNotification.SendNotification(user.DeviceId, message);
@@ -98,14 +90,16 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
-                //Check Event exists
-                bool exists = await _eventService.EventExist(model.EventId);
+                //Parse guid
+                Guid? guid = ParseGuid(model.EventId);
+                if (guid == null) return AddError("Unable to parse eventId");
 
-                if (!exists)
-                {
-                    Result.Error = "Event was not found";
-                    return Result;
-                }
+                //Check Event exists
+                var evnt = await _eventRepo.Get(x => x.Id == guid.Value)
+                    .Include(x => x.Creator).FirstOrDefaultAsync();
+
+                if (evnt == null)
+                    return AddError("Event was not found");
 
                 //Check if the recipient is a member of the app
                 var user = await _userRepo.Get(x => x.Email == model.Email).FirstOrDefaultAsync();
@@ -117,19 +111,12 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Result.Success = true;
                     return Result;
                 }
-
-                //Parse guid
-                Guid? guid = ParseGuid(model.EventId);
-                if (guid == null) return Result;
-
+                
                 //Check for an existing event invitation
                 Invitation existingInvitation = await _invitationService.CheckForDuplicates(user.Id, model.SenderUserId, null, guid.Value);
 
                 if (existingInvitation != null)
-                {
-                    Result.Error = "An invitation matching the specified values already exists";
-                    return Result;
-                }
+                    return AddError("An invitation matching the specified values already exists");
 
                 //Assuming we have a registered user create an invitation
                 Invitation inv = new Invitation
@@ -137,16 +124,14 @@ namespace AINT354_Mobile_API.BusinessLogic
                     EventId = guid.Value,
                     RecipientId = user.Id,
                     SenderId = model.SenderUserId,
-                    TypeId = (int)LookUpEnums.InvitationTypes.Event
+                    TypeId = (int)LookUpEnums.InvitationTypes.Event,
+                    DisplayMessage = $"{evnt.Creator.Name} has invited you to share their event \"{evnt.Title}\""
                 };
 
                 await _invitationService.AddInvitation(inv);
-
-                string senderName =
-                    await _userRepo.Get(x => x.Id == model.SenderUserId).Select(x => x.Name).FirstAsync();
-
+                
                 //Finally send out GCM notification
-                string message = $"{senderName} wants to share their Calendar";
+                string message = $"{evnt.Creator.Name} wants to share their Calendar";
 
                 //Send the notification
                 AndroidGCMPushNotification.SendNotification(user.DeviceId, message);

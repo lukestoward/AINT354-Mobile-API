@@ -15,5 +15,7 @@ namespace AINT354_Mobile_API.ModelDTOs
         public string DateSent { get; set; }
 
         public string Type { get; set; }
+
+        public string DisplayMessage { get; set; }
     }
 }

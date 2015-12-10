@@ -38,5 +38,8 @@ namespace AINT354_Mobile_API.Models
 
         public Guid? CalendarId { get; set; }
         public Guid? EventId { get; set; }
+
+        [Required]
+        public string DisplayMessage { get; set; }
     }
 }

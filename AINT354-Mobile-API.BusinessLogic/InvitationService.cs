@@ -36,7 +36,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                         Id = x.Id.ToString(),
                         From = x.Sender.Name,
                         DateSent = x.CreatedDate.ToString(),
-                        Type = x.Type.Name
+                        Type = x.Type.Name,
+                        DisplayMessage = x.DisplayMessage
                     })
                     .ToListAsync();
 

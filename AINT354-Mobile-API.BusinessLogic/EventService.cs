@@ -207,26 +207,36 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
         }
 
-        public async Task<bool> DeleteEvent(string id)
+        public async Task<ValidationResult> DeleteEvent(string id)
         {
             try
             {
                 //Parse guid
                 Guid? guid = ParseGuid(id);
-                if (guid == null) return false;
+                if (guid == null) return AddError("Invalid Id provided");
 
-                var evnt = await _eventRepo.GetByIdAsync(guid.Value);
+                var evnt = await _eventRepo.Get(x => x.Id == guid.Value)
+                    .Include(x => x.Calendars).FirstOrDefaultAsync();
 
-                if (evnt == null) return false;
+                if (evnt == null) return AddError("404 : Event not found");
+
+                //Delete associated calendars
+                evnt.Calendars.Clear();
 
                 _eventRepo.Delete(evnt);
                 await SaveChangesAsync();
 
-                return true;
+                Result.Success = true;
+                return Result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                Result.Error = ex.Message;
+
+                if (ex.InnerException != null)
+                    Result.Error += "\nInner exception: " + ex.InnerException;
+
+                return Result;
             }
         }
 

@@ -100,14 +100,14 @@ namespace AINT354_Mobile_API.Controllers
         {
             if (id == string.Empty) { return BadRequest(); }
 
-            var success = await _eventService.DeleteEvent(id);
+            var result = await _eventService.DeleteEvent(id);
 
-            if (success)
+            if (result.Success)
             {
                 return Ok();
             }
 
-            return BadRequest("Unable to delete event ID:" + id);
+            return BadRequest(result.Error);
         }
 
         protected override void Dispose(bool disposing)
