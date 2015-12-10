@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AINT354_Mobile_API.ModelDTOs;
 using AINT354_Mobile_API.Models;
@@ -15,10 +13,12 @@ namespace AINT354_Mobile_API.BusinessLogic
     {
         //Session Repository
         private readonly GenericRepository<Event> _eventRepo;
+        private readonly GenericRepository<Calendar> _calendarRepo;
 
         public EventService()
         {
             _eventRepo = UoW.Repository<Event>();
+            _calendarRepo = UoW.Repository<Calendar>();
         }
 
         public async Task<List<EventDTO>> GetCalendarEvents(string calId)
@@ -27,11 +27,11 @@ namespace AINT354_Mobile_API.BusinessLogic
             Guid? guid = ParseGuid(calId);
             if (guid == null) return null;
 
-            var events = await _eventRepo.Get(x => x.CalendarId == guid.Value)
+            var events = await _calendarRepo.Get(x => x.Id == guid.Value)
+                .SelectMany(x => x.Events)
                 .Select(x => new EventDTO
                 {
                     Id = x.Id.ToString(),
-                    CalendarId = x.CalendarId.ToString(),
                     Title = x.Title,
                     Location = x.Location,
                     StartDateTime = x.StartDateTime.ToString(),
@@ -58,7 +58,6 @@ namespace AINT354_Mobile_API.BusinessLogic
                 .Select(x => new EventDetailsDTO
                 {
                     Id = x.Id.ToString(),
-                    CalendarId = x.CalendarId.ToString(),
                     CreatorName = x.Creator.Name,
                     CreatedDate = x.CreatedDate,
                     Title = x.Title,
@@ -95,10 +94,18 @@ namespace AINT354_Mobile_API.BusinessLogic
                     return Result;
                 }
 
+                //Load the calendar
+                Calendar cal = await _calendarRepo.GetByIdAsync(calId.Value);
+
+                if (cal == null)
+                {
+                    Result.Error = "404 : Calendar not found";
+                    return Result;
+                }
+
                 Event newEvent = new Event
                 {
                     Id = id.Value,
-                    CalendarId = calId.Value,
                     CreatorId = model.CreatorId,
                     Title = model.Title,
                     Body = model.Body,
@@ -107,6 +114,13 @@ namespace AINT354_Mobile_API.BusinessLogic
                     StartDateTime = ParseUKDate(model.StartDateTime),
                     EndDateTime = ParseUKDate(model.EndDateTime)
                 };
+                
+                //Add the creator as a member
+                EventMember member = new EventMember { UserId = model.CreatorId };
+                newEvent.Members.Add(member);
+
+                //Add the parent calendar
+                newEvent.Calendars.Add(cal);
 
                 //If all day event override start/end times
                 if (newEvent.AllDay)
@@ -114,7 +128,6 @@ namespace AINT354_Mobile_API.BusinessLogic
                     newEvent.StartDateTime = newEvent.StartDateTime.Date; //Trims the time off the date
                     newEvent.EndDateTime= newEvent.EndDateTime.Date.AddDays(1);//Rounds to the start of the next day
                 }
-
 
                 _eventRepo.Insert(newEvent);
                 await SaveChangesAsync();
@@ -133,36 +146,35 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
         }
 
-        public async Task<ValidationResult> UpdateEvent(EventCreateDTO model)
+        public async Task<ValidationResult> UpdateEvent(EventUpdateDTO model)
         {
             try
             {
                 //Parse guid(s)
-                Guid? id = ParseGuid(model.Id);
-                if (id == null)
+                Guid? eId = ParseGuid(model.Id);
+                if (eId == null)
                 {
                     Result.Error = "Failed to parse provided Id";
                     return Result;
                 }
 
-                Guid? calId = ParseGuid(model.CalendarId);
-                if (calId == null)
-                {
-                    Result.Error = "Failed to parse provided CalendarId";
-                    return Result;
-                }
+                //Guid? calId = ParseGuid(model.CalendarId);
+                //if (calId == null)
+                //{
+                //    Result.Error = "Failed to parse provided CalendarId";
+                //    return Result;
+                //}
 
                 //Load the event from the db
-                Event evnt = await _eventRepo.GetByIdAsync(id.Value);
+                Event evnt = await _eventRepo.GetByIdAsync(eId.Value);
 
                 if (evnt == null)
                 {
                     Result.Error = "404 : Event not found";
                     return Result;
                 }
-
+                
                 //Update properties
-                evnt.CalendarId = calId.Value;
                 evnt.Title = model.Title;
                 evnt.Body = model.Body;
                 evnt.Location = model.Location;

@@ -45,6 +45,7 @@
     <Compile Include="EventCreateDTO.cs" />
     <Compile Include="EventDetailsDTO.cs" />
     <Compile Include="EventDTO.cs" />
+    <Compile Include="EventUpdateDTO.cs" />
     <Compile Include="InvitationDTO.cs" />
     <Compile Include="InviteRSVP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

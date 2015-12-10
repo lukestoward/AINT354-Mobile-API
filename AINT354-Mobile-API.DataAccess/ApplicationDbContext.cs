@@ -28,6 +28,18 @@ public class ApplicationDbContext : DbContext
         //    .HasForeignKey(s => s.CreatorId)
         //    .WillCascadeOnDelete(false);
 
+        //Calendar & Event many-to-many mapping
+        modelBuilder.Entity<Event>()
+               .HasMany<Calendar>(s => s.Calendars)
+               .WithMany(c => c.Events)
+               .Map(cs =>
+               {
+                   cs.MapLeftKey("EventId");
+                   cs.MapRightKey("CalendarId");
+                   cs.ToTable("EventCalendars");
+               });
+
+
         modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
         base.OnModelCreating(modelBuilder);

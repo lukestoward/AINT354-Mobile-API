@@ -10,6 +10,7 @@ namespace AINT354_Mobile_API.Models
         public Event()
         {
             CreatedDate = DateTime.Now;
+            Calendars = new List<Calendar>();
             Comments = new List<EventComment>();
             Members = new List<EventMember>();
         }
@@ -18,9 +19,9 @@ namespace AINT354_Mobile_API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
 
-        [Required]
-        public Guid CalendarId { get; set; }
-        public Calendar Calendar { get; set; }
+        //[Required]
+        //public Guid CalendarId { get; set; }
+        //public Calendar Calendar { get; set; }
 
         [Required]
         public int CreatorId { get; set; }
@@ -44,6 +45,9 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public DateTime EndDateTime { get; set; }
+
+        //Calendars the event is linked to
+        public ICollection<Calendar> Calendars { get; set; }
         
         public ICollection<EventComment> Comments { get; set; }
 

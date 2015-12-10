@@ -14,5 +14,7 @@ namespace AINT354_Mobile_API.ModelDTOs
 
         [Required]
         public bool Accept { get; set; }
+
+        public string DestCalendarId { get; set; }
     }
 }

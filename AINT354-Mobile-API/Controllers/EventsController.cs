@@ -76,7 +76,7 @@ namespace AINT354_Mobile_API.Controllers
         }
 
         [HttpPut]
-        public async Task<IHttpActionResult> Update(EventCreateDTO model)
+        public async Task<IHttpActionResult> Update(EventUpdateDTO model)
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 

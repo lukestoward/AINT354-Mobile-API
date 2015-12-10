@@ -90,15 +90,11 @@ namespace AINT354_Mobile_API.BusinessLogic
                     {
                         //If calendar add member to calendar
                         case (int)LookUpEnums.InvitationTypes.Calendar:
-
                             Calendar cal = await _calendarRepo.Get(x => x.Id == inv.CalendarId.Value)
                                 .Include(x => x.Members).FirstOrDefaultAsync();
 
                             if (cal == null)
-                            {
-                                Result.Error = "Calendar no longer exists. The owner may have deleted the calendar";
-                                return Result;
-                            }
+                                return AddError("Calendar no longer exists. The owner may have deleted the calendar");
 
                             //Only add the user if they aren't already a member
                             if (cal.Members.All(x => x.UserId != inv.RecipientId))
@@ -113,14 +109,17 @@ namespace AINT354_Mobile_API.BusinessLogic
                         //If Event add member to event
                         case (int)LookUpEnums.InvitationTypes.Event:
 
+                            //Check we have a valid destination calendar to add the event too.
+                            Guid? destCalId = ParseGuid(model.DestCalendarId);
+
+                            if (destCalId == null)
+                                return AddError("Failed to parse the destination calendar id");
+
                             Event evnt = await _eventRepo.Get(x => x.Id == inv.EventId.Value)
                                 .Include(x => x.Members).FirstOrDefaultAsync();
 
                             if (evnt == null)
-                            {
-                                Result.Error = "Event no longer exists. The owner may have deleted the event";
-                                return Result;
-                            }
+                                return AddError("Event no longer exists. The owner may have deleted the event");
 
                             //Only add the user if they aren't already a member
                             if (evnt.Members.All(x => x.UserId != inv.RecipientId))
@@ -130,6 +129,18 @@ namespace AINT354_Mobile_API.BusinessLogic
                                 _eventRepo.Update(evnt);
                             }
 
+                            //Check the calendar exists
+                            Calendar destCalendar = await _calendarRepo.GetByIdAsync(destCalId.Value);
+
+                            if (destCalendar == null)
+                                return AddError("404 : Destination Calendar not found");
+
+                            //Add the dest calendar to the events calendars
+                            if (evnt.Calendars.All(x => x.Id != destCalId.Value))
+                            {
+                                evnt.Calendars.Add(destCalendar);
+                                _eventRepo.Update(evnt);
+                            }
                             break;
                     }
                 }

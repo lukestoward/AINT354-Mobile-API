@@ -32,6 +32,13 @@ namespace AINT354_Mobile_API.BusinessLogic
             return id;
         }
 
+        protected ValidationResult AddError(string message)
+        {
+            Result.Error = message;
+            Result.Success = false;
+            return Result;
+        }
+
         protected void SaveChanges()
         {
             UoW.Save();
