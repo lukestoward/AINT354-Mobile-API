@@ -85,14 +85,14 @@ namespace AINT354_Mobile_API.Controllers
         {
             if (id == string.Empty) { return BadRequest(); }
 
-            var success = await _calendarService.DeleteCalendar(id);
+            var result = await _calendarService.DeleteCalendar(id);
 
-            if (success)
+            if (result.Success)
             {
                 return Ok();
             }
 
-            return BadRequest("Unable to delete calendar, ID:" + id);
+            return BadRequest(result.Error);
         }
 
         protected override void Dispose(bool disposing)
