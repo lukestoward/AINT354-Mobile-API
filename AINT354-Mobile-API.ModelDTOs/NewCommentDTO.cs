@@ -5,16 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AINT354_Mobile_API.Models
+namespace AINT354_Mobile_API.ModelDTOs
 {
-    public class EventMember : BaseEntity
+    public class NewCommentDTO
     {
         [Required]
         public Guid EventId { get; set; }
-        public Event Event { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public int CreatorId { get; set; }
+
+        [Required]
+        public string Body { get; set; }
     }
 }

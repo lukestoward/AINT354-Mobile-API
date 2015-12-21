@@ -11,11 +11,11 @@ namespace AINT354_Mobile_API.BusinessLogic
 {
     public static class AndroidGCMPushNotification
     {
+        static readonly string SERVER_API_KEY = "AIzaSyCPn-39zi5pljrmhQJgj2PLHUnT_CRJCwo";
+        static readonly string SENDER_ID = "197149327166";
+
         public static string SendNotification(string deviceId, string message)
         {
-            string SERVER_API_KEY = "AIzaSyCPn-39zi5pljrmhQJgj2PLHUnT_CRJCwo";
-            var SENDER_ID = "197149327166";
-            var value = message;
             var tRequest = WebRequest.Create("https://android.googleapis.com/gcm/send");
             tRequest.Method = "post";
             tRequest.ContentType = " application/x-www-form-urlencoded;charset=UTF-8";
@@ -23,7 +23,7 @@ namespace AINT354_Mobile_API.BusinessLogic
 
             tRequest.Headers.Add(string.Format("Sender: id={0}", SENDER_ID));
 
-            string postData = "time_to_live=108&priority=high&data.message=" + value + "&data.time=" + DateTime.Now + "&registration_id=" + deviceId + "";
+            string postData = "time_to_live=108&priority=high&data.message=" + message + "&data.time=" + DateTime.Now + "&registration_id=" + deviceId + "";
             Console.WriteLine(postData);
             Byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             tRequest.ContentLength = byteArray.Length;
@@ -46,6 +46,13 @@ namespace AINT354_Mobile_API.BusinessLogic
             tResponse.Close();
             return sResponseFromServer;
         }
+
+        public static void SendNotification(List<string> deviceIds, string message)
+        {
+            string ids = string.Join(",", deviceIds);
+
+            SendNotification(ids, message);
+        }        
     }
 
     public static class JSONHelper

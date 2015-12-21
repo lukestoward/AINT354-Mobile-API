@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AINT354_Mobile_API.ModelDTOs;
+using GamingSessionApp.DataAccess;
+using AINT354_Mobile_API.Models;
+using System.Data.Entity;
+
+namespace AINT354_Mobile_API.BusinessLogic
+{
+    public class CommentService : BaseLogic
+    {
+        private readonly GenericRepository<Event> _eventRepo;
+
+        public CommentService()
+        {
+            _eventRepo = UoW.Repository<Event>();
+        }
+
+        public async Task<List<CommentDTO>> GetEventComments(Guid id)
+        {
+            try
+            {
+                //Try and find the Event
+                Event evnt = await _eventRepo.Get(x => x.Id == id)
+                    .Include(x => x.Comments)
+                    .Include(x => x.Creator)
+                    .FirstOrDefaultAsync();
+
+                if (evnt == null) return null;
+
+                List<CommentDTO> comments = new List<CommentDTO>();
+
+                //Map comments to DTO objects
+                foreach (var comment in evnt.Comments)
+                {
+                    CommentDTO c = new CommentDTO
+                    {
+                        Author = comment.Creator.Name,
+                        CreatedDate = comment.CreatedDate.ToShortDateTimeString(),
+                        Body = comment.Body,
+                        OrderNo = comment.OrderNo
+                    };
+
+                    comments.Add(c);
+                }
+
+                //Order correctly ready to be returned
+                comments.OrderBy(x => x.OrderNo);
+
+                return comments;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<ValidationResult> CreateComment(NewCommentDTO model)
+        {
+            try
+            {
+                //Firstly check the Event exists
+                Event evnt = await _eventRepo.Get(x => x.Id == model.EventId)
+                    .Include(x => x.Comments)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync();
+
+                if (evnt == null)
+                    return AddError("Event does not exist");
+
+                //Make sure the creator is a member of the event
+                bool isMember = evnt.Members.Any(x => x.UserId == model.CreatorId);
+
+                if(!isMember)
+                    return AddError("The creator provided isn't a member of the event!");
+
+                //Create the new Comment entity
+                EventComment comment = new EventComment
+                {
+                    CreatorId = model.CreatorId,
+                    EventId = evnt.Id,
+                    Body = model.Body,
+                    OrderNo = evnt.Comments.Count() + 1
+                };
+
+                //Attached comment to event
+                evnt.Comments.Add(comment);
+
+                //Update database
+                _eventRepo.Update(evnt);
+                await SaveChangesAsync();
+
+                //Get members deviceIds
+                List<string> deviceIds = new List<string>();
+
+                foreach (var member in evnt.Members)
+                {
+                    if(member.UserId != model.CreatorId)
+                        deviceIds.Add(member.User.DeviceId);
+                }
+
+                //Finally send out notifications to members
+                AndroidGCMPushNotification.SendNewCommentNotification(deviceIds);
+
+                Result.Success = true;
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                return AddError(ex.Message);
+            }
+        }
+    }
+}
