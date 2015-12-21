@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="CalendarDTO.cs" />
     <Compile Include="CommentDTO.cs" />
+    <Compile Include="DeleteCommentDTO.cs" />
     <Compile Include="EventCreateDTO.cs" />
     <Compile Include="EventDetailsDTO.cs" />
     <Compile Include="EventDTO.cs" />

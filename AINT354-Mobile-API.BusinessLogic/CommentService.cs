@@ -13,10 +13,12 @@ namespace AINT354_Mobile_API.BusinessLogic
     public class CommentService : BaseLogic
     {
         private readonly GenericRepository<Event> _eventRepo;
+        private readonly GenericRepository<EventComment> _commentsRepo;
 
         public CommentService()
         {
             _eventRepo = UoW.Repository<Event>();
+            _commentsRepo = UoW.Repository<EventComment>();
         }
 
         public async Task<List<CommentDTO>> GetEventComments(Guid id)
@@ -38,6 +40,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 {
                     CommentDTO c = new CommentDTO
                     {
+                        Id = comment.Id,
                         Author = comment.Creator.Name,
                         CreatedDate = comment.CreatedDate.ToShortDateTimeString(),
                         Body = comment.Body,
@@ -59,6 +62,32 @@ namespace AINT354_Mobile_API.BusinessLogic
             }
         }
 
+        public async Task<ValidationResult> DeleteComment(DeleteCommentDTO model)
+        {
+            try
+            {
+                //Find and delete the comment
+                EventComment comment = await _commentsRepo.GetByIdAsync(model.CommentId);
+
+                if (comment == null)
+                    return AddError("Comment could not be found");
+
+                if(comment.EventId != model.EventId && comment.CreatorId != model.UserId)
+                    return AddError("No Comment matching the EventId and/or the UserId could be found");
+                
+                _commentsRepo.Delete(comment);
+                await SaveChangesAsync();
+
+                Result.Success = true;
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                return AddError(ex.Message);            
+            }
+           
+        }
+
         public async Task<ValidationResult> CreateComment(NewCommentDTO model)
         {
             try
@@ -66,7 +95,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 //Firstly check the Event exists
                 Event evnt = await _eventRepo.Get(x => x.Id == model.EventId)
                     .Include(x => x.Comments)
-                    .Include(x => x.Members)
+                    .Include(x => x.Members.Select(u => u.User))
                     .FirstOrDefaultAsync();
 
                 if (evnt == null)
@@ -84,8 +113,17 @@ namespace AINT354_Mobile_API.BusinessLogic
                     CreatorId = model.CreatorId,
                     EventId = evnt.Id,
                     Body = model.Body,
-                    OrderNo = evnt.Comments.Count() + 1
+                    OrderNo = 0
                 };
+
+                //Set the correct order number
+                int nextNo = 0;
+                foreach (var c in evnt.Comments)
+                {
+                    nextNo = c.OrderNo > nextNo ? c.OrderNo : nextNo;
+                }
+
+                comment.OrderNo = nextNo + 1;
 
                 //Attached comment to event
                 evnt.Comments.Add(comment);
@@ -103,8 +141,16 @@ namespace AINT354_Mobile_API.BusinessLogic
                         deviceIds.Add(member.User.DeviceId);
                 }
 
-                //Finally send out notifications to members
-                AndroidGCMPushNotification.SendNewCommentNotification(deviceIds);
+                if (deviceIds.Any())
+                {
+                    //Finally send out notifications to members
+                    string authorName = evnt.Members.Where(x => x.UserId == model.CreatorId)
+                        .First().User.Name;
+
+                    string message = $"{authorName} has posted a comment on \"{evnt.Title}\"";
+
+                    AndroidGCMPushNotification.SendNotification(deviceIds, message);
+                }
 
                 Result.Success = true;
                 return Result;

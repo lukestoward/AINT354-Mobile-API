@@ -41,7 +41,21 @@ namespace AINT354_Mobile_API.Controllers
             }
 
             return BadRequest(result.Error);
+        }
 
+        [HttpDelete]
+        public async Task<IHttpActionResult> DeleteComment(DeleteCommentDTO model)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var result = await _commentService.DeleteComment(model);
+
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest(result.Error);
         }
 
         protected override void Dispose(bool disposing)

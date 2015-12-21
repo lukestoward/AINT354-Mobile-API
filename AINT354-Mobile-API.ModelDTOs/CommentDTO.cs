@@ -10,6 +10,9 @@ namespace AINT354_Mobile_API.ModelDTOs
     public class CommentDTO
     {
         [Required]
+        public int Id { get; set; }
+
+        [Required]
         public string Author { get; set; }
 
         [Required]
