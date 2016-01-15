@@ -13,6 +13,9 @@ namespace AINT354_Mobile_API.ModelDTOs
         public string Id { get; set; }
 
         [Required]
+        public int CreatorId { get; set; }
+
+        [Required]
         public string CreatorName { get; set; }
 
         [Required]
@@ -33,6 +36,8 @@ namespace AINT354_Mobile_API.ModelDTOs
 
         [Required]
         public string EndDateTime { get; set; }
+
+        public int MembersCount { get; set; }
 
         //public ICollection<EventComment> Comments { get; set; }
 

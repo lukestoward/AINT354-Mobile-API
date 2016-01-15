@@ -47,9 +47,11 @@
     <Compile Include="EventCreateDTO.cs" />
     <Compile Include="EventDetailsDTO.cs" />
     <Compile Include="EventDTO.cs" />
+    <Compile Include="EventMembersDTO.cs" />
     <Compile Include="EventUpdateDTO.cs" />
     <Compile Include="InvitationDTO.cs" />
     <Compile Include="InviteRSVP.cs" />
+    <Compile Include="MemberDTO.cs" />
     <Compile Include="NewCommentDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterUser.cs" />

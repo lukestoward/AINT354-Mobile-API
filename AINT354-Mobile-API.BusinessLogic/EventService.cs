@@ -58,6 +58,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 .Select(x => new EventDetailsDTO
                 {
                     Id = x.Id.ToString(),
+                    CreatorId = x.CreatorId,
                     CreatorName = x.Creator.Name,
                     CreatedDate = x.CreatedDate,
                     Title = x.Title,
@@ -66,6 +67,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                     AllDay = x.AllDay,
                     StartDateTime = x.StartDateTime.ToString(),
                     EndDateTime = x.EndDateTime.ToString(),
+                    MembersCount = x.Members.Count,
                 }).FirstOrDefaultAsync();
 
             //Convert the dates in to specific formats
