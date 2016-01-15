@@ -25,18 +25,18 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
-                //Try and find the Event
-                Event evnt = await _eventRepo.Get(x => x.Id == id)
-                    .Include(x => x.Comments)
+                //Load comments if any
+                List<EventComment> comments = await _commentsRepo.Get(x => x.EventId == id)
                     .Include(x => x.Creator)
-                    .FirstOrDefaultAsync();
+                    .ToListAsync();
 
-                if (evnt == null) return null;
-
-                List<CommentDTO> comments = new List<CommentDTO>();
+                List<CommentDTO> commentDTOs = new List<CommentDTO>();
+                
+                //Return empty array is no comments
+                if (comments.Count < 1) return commentDTOs;
 
                 //Map comments to DTO objects
-                foreach (var comment in evnt.Comments)
+                foreach (var comment in comments)
                 {
                     CommentDTO c = new CommentDTO
                     {
@@ -47,13 +47,13 @@ namespace AINT354_Mobile_API.BusinessLogic
                         OrderNo = comment.OrderNo
                     };
 
-                    comments.Add(c);
+                    commentDTOs.Add(c);
                 }
 
                 //Order correctly ready to be returned
-                comments.OrderBy(x => x.OrderNo);
+                commentDTOs.OrderBy(x => x.OrderNo);
 
-                return comments;
+                return commentDTOs;
 
             }
             catch (Exception ex)
