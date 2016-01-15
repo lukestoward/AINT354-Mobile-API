@@ -67,7 +67,7 @@ namespace AINT354_Mobile_API.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.CreatorId, cascadeDelete: true)
-                .ForeignKey("dbo.Events", t => t.EventId)
+                .ForeignKey("dbo.Events", t => t.EventId, cascadeDelete: true)
                 .Index(t => t.EventId)
                 .Index(t => t.CreatorId);
             
