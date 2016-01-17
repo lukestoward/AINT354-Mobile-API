@@ -25,7 +25,7 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
-                //First load the event
+                //First load the members
                 var members = await _memberRepo.Get(x => x.EventId == id)
                     .Include(x => x.User)
                     .ToListAsync();
@@ -48,26 +48,31 @@ namespace AINT354_Mobile_API.BusinessLogic
         {
             try
             {
-                //Load the event
-                Event ev = await _eventRepo.Get(x => x.Id == model.EventId)
-                    .Include(x => x.Members)
-                    .FirstOrDefaultAsync();
+                //First load the members
+                var members = await _memberRepo.Get(x => x.EventId == model.EventId)
+                    .ToListAsync();
 
-                if (ev == null) return AddError("404: Event not found!");
-
-                //Clear the list of members
-                ev.Members.Clear();
-
-                //Create the new list of members
-                foreach (var id in model.MemberIds)
+                //Create a new list of members
+                List<EventMember> newMembersList = model.MemberIds.Select(id => new EventMember
                 {
-                    ev.Members.Add(new EventMember{ UserId = id });
+                    EventId = model.EventId,
+                    UserId = id
+                }).ToList();
+
+                foreach (var m in members)
+                {
+                    _memberRepo.Delete(m);
                 }
 
-                if (ev.Members.Count < 1) return AddError("Unable to update event members");
+                //First check we have at least the owner member
+                if (newMembersList.Count < 1) return AddError("Unable to update event members");
 
-                //Update db
-                _eventRepo.Update(ev);
+                //Insert the rebuilt list of users
+                foreach (var newMem in newMembersList)
+                {
+                    _memberRepo.Insert(newMem);
+                }
+                
                 await SaveChangesAsync();
 
                 Result.Success = true;
