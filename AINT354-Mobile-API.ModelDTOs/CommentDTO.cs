@@ -13,6 +13,9 @@ namespace AINT354_Mobile_API.ModelDTOs
         public int Id { get; set; }
 
         [Required]
+        public int AuthorId { get; set; }
+
+        [Required]
         public string Author { get; set; }
 
         [Required]

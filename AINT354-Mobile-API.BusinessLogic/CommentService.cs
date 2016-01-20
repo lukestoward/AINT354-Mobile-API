@@ -41,6 +41,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                     CommentDTO c = new CommentDTO
                     {
                         Id = comment.Id,
+                        AuthorId = comment.CreatorId,
                         Author = comment.Creator.Name,
                         CreatedDate = comment.CreatedDate.ToShortDateTimeString(),
                         Body = comment.Body,
