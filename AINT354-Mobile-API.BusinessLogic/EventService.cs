@@ -99,7 +99,9 @@ namespace AINT354_Mobile_API.BusinessLogic
                 }
 
                 //Load the calendar
-                Calendar cal = await _calendarRepo.GetByIdAsync(calId.Value);
+                Calendar cal = await _calendarRepo.Get(x => x.Id == calId.Value)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync();
 
                 if (cal == null)
                 {
@@ -123,6 +125,19 @@ namespace AINT354_Mobile_API.BusinessLogic
                 //Add the creator as a member
                 EventMember member = new EventMember { UserId = model.CreatorId };
                 newEvent.Members.Add(member);
+
+                //Add linked calendar members to the new event
+                foreach (var mem in cal.Members)
+                {
+                    //Ignore creator (we just added them)
+                    if (mem.UserId == model.CreatorId) continue;
+
+                    //Add all other linked calendar members
+                    newEvent.Members.Add(new EventMember
+                    {
+                        UserId = mem.UserId
+                    });
+                }
 
                 //Add the parent calendar
                 newEvent.Calendars.Add(cal);
