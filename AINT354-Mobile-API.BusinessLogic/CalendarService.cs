@@ -25,6 +25,9 @@ namespace AINT354_Mobile_API.BusinessLogic
 
         public async Task<List<CalendarDTO>> GetUserCalendars(int id)
         {
+            DateTime today = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            DateTime tomorrow = today.AddDays(1);
+
             //Search the calendar members table and pull out the users calendars
             var calendars = await _calendarMemberRepo.Get(x => x.UserId == id)
                 .Select(x => new CalendarDTO
@@ -33,7 +36,9 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Name = x.Calendar.Name,
                     OwnerId = x.Calendar.OwnerId,
                     ColourId = x.Calendar.Colour.Id,
-                    Description = x.Calendar.Description
+                    Description = x.Calendar.Description,
+                    Shared = x.Calendar.Members.Count > 1,
+                    TodaysEventCount = x.Calendar.Events.Count(e => e.StartDateTime >= today && e.StartDateTime <= tomorrow)
                 }).ToListAsync();
 
             return calendars;

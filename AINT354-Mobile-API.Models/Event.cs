@@ -46,6 +46,9 @@ namespace AINT354_Mobile_API.Models
         [Required]
         public DateTime EndDateTime { get; set; }
 
+        [Required]
+        public int ColourId { get; set; }
+
         //Calendars the event is linked to
         public ICollection<Calendar> Calendars { get; set; }
         

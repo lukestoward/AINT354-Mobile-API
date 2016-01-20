@@ -36,7 +36,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Location = x.Location,
                     StartDateTime = x.StartDateTime.ToString(),
                     EndDateTime = x.EndDateTime.ToString(),
-                    AllDay = x.AllDay
+                    AllDay = x.AllDay,
+                    ColourId = x.ColourId
                 }).ToListAsync();
 
             foreach (var e in events)
@@ -68,6 +69,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                     StartDateTime = x.StartDateTime.ToString(),
                     EndDateTime = x.EndDateTime.ToString(),
                     MembersCount = x.Members.Count,
+                    ColourId = x.ColourId
                 }).FirstOrDefaultAsync();
 
             //Convert the dates in to specific formats
@@ -114,7 +116,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Location = model.Location,
                     AllDay = model.AllDay,
                     StartDateTime = ParseUKDate(model.StartDateTime),
-                    EndDateTime = ParseUKDate(model.EndDateTime)
+                    EndDateTime = ParseUKDate(model.EndDateTime),
+                    ColourId = model.ColourId
                 };
                 
                 //Add the creator as a member
@@ -183,6 +186,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 evnt.AllDay = model.AllDay;
                 evnt.StartDateTime = ParseUKDate(model.StartDateTime);
                 evnt.EndDateTime = ParseUKDate(model.EndDateTime);
+                evnt.ColourId = model.ColourId;
 
                 //If all day event override start/end times
                 if (evnt.AllDay)

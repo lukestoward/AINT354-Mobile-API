@@ -39,7 +39,7 @@ namespace AINT354_Mobile_API.ModelDTOs
 
         public int MembersCount { get; set; }
 
-        //public ICollection<EventComment> Comments { get; set; }
-
+        [Required]
+        public int ColourId { get; set; }
     }
 }

@@ -23,5 +23,9 @@ namespace AINT354_Mobile_API.ModelDTOs
 
         [Required]
         public int OwnerId { get; set; }
+
+        public bool Shared { get; set; }
+
+        public int TodaysEventCount { get; set; }
     }
 }

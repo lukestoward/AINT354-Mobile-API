@@ -29,5 +29,8 @@ namespace AINT354_Mobile_API.ModelDTOs
 
         [Required]
         public string EndDateTime { get; set; }
+
+        [Required]
+        public int ColourId { get; set; }
     }
 }

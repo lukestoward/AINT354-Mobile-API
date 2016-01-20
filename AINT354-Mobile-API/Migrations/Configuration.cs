@@ -48,13 +48,15 @@ namespace AINT354_Mobile_API.Migrations
                 //Create event data
 
                 Event event1 = new Event { Id = Guid.NewGuid(), CreatorId = 1, CreatedDate = DateTime.Now, Title = "My First Event", Body = "This is the body text",
-                    Location = "My House", AllDay = false, StartDateTime = DateTime.Now.AddDays(1), EndDateTime = DateTime.Now.AddDays(1).AddHours(2) };
+                    Location = "My House", AllDay = false, StartDateTime = DateTime.Now.AddDays(1), EndDateTime = DateTime.Now.AddDays(1).AddHours(2), ColourId = 1 };
 
                 Event event2 = new Event { Id = Guid.NewGuid(), CreatorId = 1, CreatedDate = DateTime.Now.AddHours(1), Title = "My Second Event", Body = "This is the body text",
-                    Location = "Uni", AllDay = false, StartDateTime = DateTime.Now.AddHours(2), EndDateTime = DateTime.Now.AddHours(2).AddMinutes(30) };
+                    Location = "Uni", AllDay = false, StartDateTime = DateTime.Now.AddHours(2), EndDateTime = DateTime.Now.AddHours(2).AddMinutes(30), ColourId = 1
+                };
 
                 Event event3 = new Event { Id = Guid.NewGuid(), CreatorId = 1, CreatedDate = DateTime.Now.AddDays(2), Title = "My Third Event", Body = "This is the body text",
-                    Location = "4 Allendale Road", AllDay = false, StartDateTime = DateTime.Now.AddDays(3), EndDateTime = DateTime.Now.AddDays(3).AddHours(4) };
+                    Location = "4 Allendale Road", AllDay = false, StartDateTime = DateTime.Now.AddDays(3), EndDateTime = DateTime.Now.AddDays(3).AddHours(4), ColourId = 1
+                };
 
                 //Attach the events to the seeded calendar
                 event1.Calendars.Add(cal);
