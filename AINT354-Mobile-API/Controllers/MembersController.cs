@@ -44,5 +44,29 @@ namespace AINT354_Mobile_API.Controllers
             return BadRequest(result.Error);
         }
 
+        [HttpGet]
+        [ResponseType(typeof(List<MemberDTO>))]
+        public async Task<IHttpActionResult> CalendarMembers(Guid id)
+        {
+            if (id == Guid.Empty) return BadRequest();
+
+            var members = await _memberService.GetCalendarMembers(id);
+
+            return Ok(members);
+        }
+
+        [HttpPut]
+        public async Task<IHttpActionResult> CalendarMembers(CalendarMembersDTO model)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            ValidationResult result = await _memberService.UpdateCalendarMembers(model);
+
+            if (result.Success)
+                return Ok();
+
+            return BadRequest(result.Error);
+        }
+
     }
 }

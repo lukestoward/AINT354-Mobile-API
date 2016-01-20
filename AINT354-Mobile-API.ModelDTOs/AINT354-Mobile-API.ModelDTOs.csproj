@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalendarDTO.cs" />
+    <Compile Include="CalendarMembersDTO.cs" />
     <Compile Include="CommentDTO.cs" />
     <Compile Include="DeleteCommentDTO.cs" />
     <Compile Include="EventCreateDTO.cs" />

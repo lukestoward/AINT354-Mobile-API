@@ -20,7 +20,7 @@ namespace AINT354_Mobile_API.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Colours", t => t.ColourId, cascadeDelete: true)
-                .ForeignKey("dbo.Users", t => t.OwnerId, cascadeDelete: true)
+                .ForeignKey("dbo.Users", t => t.OwnerId)
                 .Index(t => t.ColourId)
                 .Index(t => t.OwnerId);
             

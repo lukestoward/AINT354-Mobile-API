@@ -5,18 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AINT354_Mobile_API.Models
+namespace AINT354_Mobile_API.ModelDTOs
 {
-    public class CalendarMember
+    public class CalendarMembersDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public Guid CalendarId { get; set; }
-        public Calendar Calendar { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public List<int> MemberIds { get; set; }
     }
 }
