@@ -9,7 +9,9 @@ namespace AINT354_Mobile_API.ModelDTOs
         [Required]
         public Guid EventId { get; set; }
 
+        //Needs to be a string for some reason, as the android app 
+        //Can't send a List<int>... Stupid
         [Required]
-        public List<int> MemberIds { get; set; }
+        public string MemberIds { get; set; }
     }
 }

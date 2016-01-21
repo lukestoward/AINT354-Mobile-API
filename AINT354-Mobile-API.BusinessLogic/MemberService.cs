@@ -55,8 +55,11 @@ namespace AINT354_Mobile_API.BusinessLogic
                 var members = await _eventMemberRepo.Get(x => x.EventId == model.EventId)
                     .ToListAsync();
 
+                //Split the Ids string and create list of integers
+                List<int> ids = model.MemberIds.Split(',').Select(int.Parse).ToList();
+
                 //Create a new list of members
-                List<EventMember> newMembersList = model.MemberIds.Select(id => new EventMember
+                List<EventMember> newMembersList = ids.Select(id => new EventMember
                 {
                     EventId = model.EventId,
                     UserId = id
@@ -118,8 +121,11 @@ namespace AINT354_Mobile_API.BusinessLogic
                     .Select(x => x.UserId)
                     .ToListAsync();
 
+                //Split the Ids string and create list of integers
+                List<int> ids = model.MemberIds.Split(',').Select(int.Parse).ToList();
+
                 //Calculate the members set for removal
-                List<int> removedMemberIds = memberIds.Except(model.MemberIds).ToList();
+                List<int> removedMemberIds = memberIds.Except(ids).ToList();
 
                 foreach (var id in removedMemberIds)
                 {
