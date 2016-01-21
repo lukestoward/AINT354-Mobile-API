@@ -30,17 +30,16 @@ namespace AINT354_Mobile_API.BusinessLogic
             try
             {
                 //First load the members
-                var members = await _eventMemberRepo.Get(x => x.EventId == id)
-                    .Include(x => x.User)
+                List<MemberDTO> members = await _eventMemberRepo.Get(x => x.EventId == id)
+                    .Select(x => new MemberDTO
+                    {
+                        Id = x.Id,
+                        FacebookId = x.User.FacebookId,
+                        Name = x.User.Name
+                    })
                     .ToListAsync();
 
-                List<MemberDTO> memberDTOs = members.Select(m => new MemberDTO
-                {
-                    Id = m.User.Id,
-                    Name = m.User.Name
-                }).ToList();
-
-                return memberDTOs;
+                return members;
             }
             catch (Exception ex)
             {
@@ -97,7 +96,8 @@ namespace AINT354_Mobile_API.BusinessLogic
                     .Select(m => new MemberDTO
                     {
                         Id = m.User.Id,
-                        Name = m.User.Name
+                        Name = m.User.Name,
+                        FacebookId = m.User.FacebookId
                     })
                     .ToListAsync();
 

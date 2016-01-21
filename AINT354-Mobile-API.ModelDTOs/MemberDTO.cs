@@ -7,6 +7,8 @@ namespace AINT354_Mobile_API.ModelDTOs
         [Required]
         public int Id { get; set; }
 
+        public long FacebookId { get; set; }
+
         public string Name { get; set; }
     }
 }
