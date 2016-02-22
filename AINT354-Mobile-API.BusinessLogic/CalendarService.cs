@@ -35,7 +35,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                     Id = x.CalendarId.ToString(),
                     Name = x.Calendar.Name,
                     OwnerId = x.Calendar.OwnerId,
-                    ColourId = x.Calendar.Colour.Id,
+                    ColourId = x.Calendar.ColourId,
                     Description = x.Calendar.Description,
                     Shared = x.Calendar.Members.Count > 1,
                     TodaysEventCount = x.Calendar.Events.Count(e => e.StartDateTime >= today && e.StartDateTime <= tomorrow)

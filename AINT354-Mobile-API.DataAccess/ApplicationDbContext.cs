@@ -48,8 +48,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Calendar> Calendars { get; set; }
 
     public DbSet<CalendarMember> CalendarMembers { get; set; }
-    
-    public DbSet<Colour> Colours { get; set; }
 
     public DbSet<Event> Events { get; set; }
 

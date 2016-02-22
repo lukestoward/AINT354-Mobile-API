@@ -52,7 +52,13 @@ namespace AINT354_Mobile_API.BusinessLogic
             string ids = string.Join(",", deviceIds);
 
             SendNotification(ids, message);
-        }        
+        }
+
+        public static void NewEventNotification(List<string> deviceIds, string message, Guid eventId)
+        {
+            //Need to change this but it will do for testing.
+            SendNotification(deviceIds, message);
+        }
     }
 
     public static class JSONHelper

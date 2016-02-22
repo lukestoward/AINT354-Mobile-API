@@ -44,7 +44,6 @@
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="CalendarMember.cs" />
-    <Compile Include="Colour.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventComment.cs" />
     <Compile Include="EventMember.cs" />

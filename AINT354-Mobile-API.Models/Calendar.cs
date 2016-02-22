@@ -32,7 +32,6 @@ namespace AINT354_Mobile_API.Models
 
         [Required]
         public int ColourId { get; set; }
-        public Colour Colour { get; set; }
 
         [Required]
         public int OwnerId { get; set; }

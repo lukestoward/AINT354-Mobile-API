@@ -18,14 +18,6 @@ namespace AINT354_Mobile_API.Migrations
         
         protected override void Seed(ApplicationDbContext context)
         {
-            context.Colours.AddOrUpdate(p => p.ColourName,
-                new Colour { ColourName = "Red" },
-                new Colour { ColourName = "Green" },
-                new Colour { ColourName = "Blue" },
-                new Colour { ColourName = "Orange" }
-            );
-            context.SaveChanges();
-
             context.Users.AddOrUpdate(p => p.Email,
                 new User { Id = 1, Name = "Luke Stoward", Email = "luke@email.com", DeviceId = "34jk2kjh2" , FacebookId = 123},
                 new User { Id = 2, Name = "Thomas Kraaijeveld", Email = "thomaskraaijeveld@hotmail.com", DeviceId = "654asfsf5", FacebookId = 4235564436}

@@ -33,7 +33,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 List<MemberDTO> members = await _eventMemberRepo.Get(x => x.EventId == id)
                     .Select(x => new MemberDTO
                     {
-                        Id = x.Id,
+                        Id = x.UserId,
                         FacebookId = x.User.FacebookId,
                         Name = x.User.Name
                     })
@@ -98,7 +98,7 @@ namespace AINT354_Mobile_API.BusinessLogic
                 List<MemberDTO> members = await _calendarMemberRepo.Get(x => x.CalendarId == id)
                     .Select(m => new MemberDTO
                     {
-                        Id = m.User.Id,
+                        Id = m.UserId,
                         Name = m.User.Name,
                         FacebookId = m.User.FacebookId
                     })

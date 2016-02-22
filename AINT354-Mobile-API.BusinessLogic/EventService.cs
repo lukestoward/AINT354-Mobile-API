@@ -100,7 +100,7 @@ namespace AINT354_Mobile_API.BusinessLogic
 
                 //Load the calendar
                 Calendar cal = await _calendarRepo.Get(x => x.Id == calId.Value)
-                    .Include(x => x.Members)
+                    .Include(x => x.Members.Select(m => m.User))
                     .FirstOrDefaultAsync();
 
                 if (cal == null)
@@ -123,7 +123,11 @@ namespace AINT354_Mobile_API.BusinessLogic
                 };
                 
                 //Add the creator as a member
-                EventMember member = new EventMember { UserId = model.CreatorId };
+                User creator = await UoW.Repository<User>().GetByIdAsync(model.CreatorId);
+
+                if (creator == null) return AddError("Creator doesn't exist");
+
+                EventMember member = new EventMember { UserId = creator.Id };
                 newEvent.Members.Add(member);
 
                 //Add linked calendar members to the new event
@@ -151,6 +155,20 @@ namespace AINT354_Mobile_API.BusinessLogic
 
                 _eventRepo.Insert(newEvent);
                 await SaveChangesAsync();
+
+                //Now send out notification to calendar members
+                string message = $"{creator.Name} has created a new event on calendar \"{cal.Name}\"";
+
+                List<string> deviceIds = new List<string>();
+                //Build list of device ids (ignoring creator)
+                foreach (var mem in cal.Members)
+                {
+                    if (mem.UserId == creator.Id) continue;
+
+                    deviceIds.Add(mem.User.DeviceId);
+                }
+
+                AndroidGCMPushNotification.NewEventNotification(deviceIds, message, newEvent.Id);
 
                 Result.Success = true;
                 return Result;
